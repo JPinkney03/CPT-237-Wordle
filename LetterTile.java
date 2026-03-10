@@ -38,10 +38,14 @@ public class LetterTile extends Pane
       // Letter display
       // TO DO: Set up font
       Label letterDisplay = new Label("L");
+      letterDisplay.getStyleClass().add("tile"); //css styling
       letterDisplay.setMinWidth(squareSize);
       letterDisplay.setMinHeight(squareSize);
       letterDisplay.setAlignment(Pos.CENTER);
       this.getChildren().add(letterDisplay);
+      
+      letterDisplay.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+
+
    }
 }
-

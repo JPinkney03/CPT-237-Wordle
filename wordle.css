@@ -1,0 +1,41 @@
+//title styling
+.tile {
+    -fx-pref-width: 50px;
+    -fx-pref-height: 50px;
+    -fx-alignment: center;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Verdana";
+    -fx-background-color: white;
+
+}
+
+//keyboard buttons
+.keyboard-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-background-color: #d3d6da;
+    -fx-border-color: #999;
+    -fx-border-width: 1px;
+}
+
+.keyboard-button:hover {
+    -fx-background-color: #c7c9cc;
+}
+
+//enter and delete buttons
+.keyboard-wide {
+    -fx-pref-width: 60px;
+}
+
+//title
+.title-label {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 3px;
+    -fx-padding: 10px;
+}
+
