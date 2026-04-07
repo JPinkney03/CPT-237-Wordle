@@ -9,6 +9,7 @@
 // CPT-237-W34
 // Spring 2026
 
+
 import javafx.geometry.*;
 import javafx.scene.layout.*;
 
@@ -88,32 +89,56 @@ public class GuessRow extends HBox
       selectedTile.selectLetter();
    }
    
-   public boolean adjudicateGuess(String answer)
-   {
-      for(int i=0; i<5; i++)
-      {
-         LetterTile thisTile = (LetterTile)this.getChildren().get(i);
-         
-         // Same letter in same spot
-         if (answer.charAt(i) == guess.charAt(i))
-         {
-            thisTile.setCorrect();
-         }
-         // Letter in word, in a different spot
-         else if (answer.indexOf(guess.charAt(i)) != -1)
-         {
-            thisTile.setMisplaced();
-         }
-         else
-         {
-            thisTile.setIncorrect();
-         }
-         
-      }
-      
-      // Win condition
-      if (answer.equals(guess)) return true;
-      
-      return false;
-   }
+   public boolean adjudicateGuess(String answer) //edited to use a two pass system so words with duplicate letters can be marked correctly
+{
+    answer = answer.toUpperCase();
+    guess = guess.toUpperCase();
+
+    // Track which letters in the answer have been matched
+    boolean[] used = new boolean[5];
+
+    // Pass 1 mark green tiles
+    for (int i = 0; i < 5; i++)
+    {
+        LetterTile tile = (LetterTile) this.getChildren().get(i);
+
+        if (guess.charAt(i) == answer.charAt(i))
+        {
+            tile.setCorrect();
+            used[i] = true;  // mark this answer position as used
+        }
+    }
+
+    // Pass 2 mark yellow and gray tiles
+    for (int i = 0; i < 5; i++)
+    {
+        LetterTile tile = (LetterTile) this.getChildren().get(i);
+
+        // Skip green tiles
+        if (guess.charAt(i) == answer.charAt(i))
+            continue;
+
+        boolean found = false;
+
+        // Look for an unused matching letter in the answer
+        for (int j = 0; j < 5; j++)
+        {
+            if (!used[j] && guess.charAt(i) == answer.charAt(j))
+            {
+                found = true;
+                used[j] = true;  // mark this answer position as used
+                break;
+            }
+        }
+
+        if (found)
+            tile.setMisplaced();  // yellow
+        else
+            tile.setIncorrect();  // gray
+    }
+
+    // Win condition
+    return guess.equals(answer);
+}
+
 }

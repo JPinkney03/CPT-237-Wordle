@@ -9,6 +9,7 @@
 // CPT-237-W34
 // Spring 2026
 
+
 import javafx.scene.*;
 import javafx.scene.shape.*;
 import javafx.scene.control.*;
@@ -30,11 +31,6 @@ public class LetterTile extends Pane
    // Constructor
    LetterTile()
    {
-      // Rectangle of squareSize by squareSize
-      Rectangle rectangle = new Rectangle(squareSize, squareSize);
-      rectangle.setFill(unguessedColor);
-      rectangle.setStroke(Color.BLACK);
-      this.getChildren().add(rectangle);
       
       // Letter display
       letterDisplay = new Label(" ");
@@ -77,4 +73,3 @@ public class LetterTile extends Pane
       letterDisplay.setStyle("-fx-background-color: #787d7d;");
    }
 }
-

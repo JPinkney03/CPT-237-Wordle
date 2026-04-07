@@ -6,6 +6,7 @@
 
 // CPT-237-W34
 // Spring 2026
+  
 
 import javafx.application.*;
 import javafx.scene.*;
@@ -42,10 +43,11 @@ public class GroupProjectWordle extends Application
       catch(Exception openExec)
       {
          dictionary = new ArrayList<String>();
+         potential_answers = new ArrayList<>(); //added for catching the crash if txt files don't load
       }
       System.out.println("Dictionary Length: " + dictionary.size());
       System.out.println("Potential Answers: " + potential_answers.size());
-      
+        
       // Setting up guessing area
       guessArea = new VBox();
       for(int i=0; i<6; i++)
@@ -252,6 +254,7 @@ public class GroupProjectWordle extends Application
       {
          // Correct guess
          gameEnded = true;
+         endScreen(true);
          return;
       }
       
@@ -261,14 +264,52 @@ public class GroupProjectWordle extends Application
       if (guessCount > 5)
       {
          // Failure condition
-         System.out.println("Target: " + targetWord);
          gameEnded = true;
+         endScreen(false);
          return;
       }
       
       thisGuess = (GuessRow)guessArea.getChildren().get(guessCount);
       thisGuess.nowGuessing();
    }
+   
+   // Game over screen for if the player guesses the correct word (win) or runs out of guesses (lose)
+   private void endScreen(boolean won)
+{
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("Game Over");
+
+    if (won)
+    {
+        alert.setHeaderText("You Won!");
+        alert.setContentText("Great job! The word was: " + targetWord); // Win screen congratulates player and tells the target word
+    }
+    else
+    {
+        alert.setHeaderText("You Lost!");
+        alert.setContentText("Sorry, The word was: " + targetWord); // Win screen says sorry to player and tells the target word
+    }
+    
+    ButtonType playAgainBtn = new ButtonType("Play Again");
+    ButtonType quitBtn = new ButtonType("Quit");
+    
+    alert.getButtonTypes().setAll(playAgainBtn, quitBtn);
+    
+    ButtonType result = alert.showAndWait().orElse(quitBtn); // Win screen will stay up until a button is selected or the X is pressed
+
+    if (result == playAgainBtn) // Reset game if play again is selected
+    {
+        newGame();
+    }
+    else
+    {
+        System.exit(0); //Exit program if quit is selected
+    }
+
+
+}
+
+
   
    
    public static void main(String[] args)
