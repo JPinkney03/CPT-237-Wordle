@@ -18,6 +18,7 @@ import javafx.geometry.*;
 
 public class LetterTile extends Pane
 {
+   Label letterDisplay;
    static double squareSize = 50.0;
    
    // Colors
@@ -36,8 +37,7 @@ public class LetterTile extends Pane
       this.getChildren().add(rectangle);
       
       // Letter display
-      // TO DO: Set up font
-      Label letterDisplay = new Label("L");
+      letterDisplay = new Label(" ");
       letterDisplay.getStyleClass().add("tile"); //css styling
       letterDisplay.setMinWidth(squareSize);
       letterDisplay.setMinHeight(squareSize);
@@ -45,7 +45,36 @@ public class LetterTile extends Pane
       this.getChildren().add(letterDisplay);
       
       letterDisplay.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-
-
+   }
+   
+   public void setLetter(String letter)
+   {
+      letterDisplay.setText(letter);
+   }
+   
+   public void selectLetter()
+   {
+      letterDisplay.setStyle("-fx-background-color: blue;");
+   }
+   
+   public void unselectLetter()
+   {
+      letterDisplay.setStyle("-fx-background-color: white;");
+   }
+   
+   public void setCorrect()
+   {
+      letterDisplay.setStyle("-fx-background-color: #188754;");
+   }
+   
+   public void setMisplaced()
+   {
+      letterDisplay.setStyle("-fx-background-color: #c9b459;");
+   }
+   
+   public void setIncorrect()
+   {
+      letterDisplay.setStyle("-fx-background-color: #787d7d;");
    }
 }
+

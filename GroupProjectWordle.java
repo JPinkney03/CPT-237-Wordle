@@ -11,17 +11,43 @@ import javafx.application.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.input.*;
 import javafx.event.*;
 import javafx.stage.*;
 import javafx.geometry.*;
+import java.util.*;
+import java.io.*;
+import java.nio.file.*;
 
 
 public class GroupProjectWordle extends Application
 {
+   VBox guessArea;
+   int guessCount = 0;
+   GuessRow thisGuess;
+   String targetWord = "TESTW";
+   boolean gameEnded = false;
+   
+   List<String> dictionary;
+   List<String> potential_answers;
+
    public void start(Stage primaryStage)
    {
+      // Setting up dictionary
+      try
+      {
+         dictionary = Files.readAllLines(Paths.get("valid-wordle-words.txt"));
+         potential_answers = Files.readAllLines(Paths.get("wordle-answers-alphabetical.txt"));
+      }
+      catch(Exception openExec)
+      {
+         dictionary = new ArrayList<String>();
+      }
+      System.out.println("Dictionary Length: " + dictionary.size());
+      System.out.println("Potential Answers: " + potential_answers.size());
+      
       // Setting up guessing area
-      VBox guessArea = new VBox();
+      guessArea = new VBox();
       for(int i=0; i<6; i++)
       {
          guessArea.getChildren().add(new GuessRow());
@@ -35,7 +61,6 @@ public class GroupProjectWordle extends Application
 
       
       // Setting up title
-      // TO DO: Set up title
       Label title = new Label("WORDLE");
       title.getStyleClass().add("title-label"); //css styling
       title.setAlignment(Pos.CENTER);
@@ -60,7 +85,8 @@ public class GroupProjectWordle extends Application
       keyboard.setAlignment(Pos.CENTER);
       keyboard.setPadding(new Insets(10, 20, 20, 20)); 
 
-
+      // Setting Scene for key press events
+      Scene scene = new Scene(borderPane, 440, 650);
 
       //Row 1
       HBox row1 = new HBox(5);
@@ -70,6 +96,10 @@ public class GroupProjectWordle extends Application
          b.getStyleClass().add("keyboard-button"); //css styling
          b.setPrefWidth(35);
          row1.getChildren().add(b);
+         b.setOnAction(event -> {
+            guessLetter(String.valueOf(c));
+            });
+         b.setFocusTraversable(false); // Prevents ENTER key activation
       }
 
       //Row 2
@@ -80,16 +110,21 @@ public class GroupProjectWordle extends Application
           b.getStyleClass().add("keyboard-button"); //css styling
           b.setPrefWidth(35);
           row2.getChildren().add(b);
+          b.setOnAction(event -> {
+            guessLetter(String.valueOf(c));
+            });
+          b.setFocusTraversable(false); // Prevents ENTER key activation
       }
       
       //Row 3
       HBox row3 = new HBox(5);
       
       //ENTER button
-      Button enterBtn = new Button("ENTER");
+      Button enterBtn = new Button("↵"); // Enter symbol hexcode: 21B5
       enterBtn.setPrefWidth(60);
       enterBtn.getStyleClass().addAll("keyboard-button", "keyboard-wide"); //css styling
       row3.getChildren().add(enterBtn);
+      enterBtn.setOnAction(event -> submitGuess());
       
       //Middle keys
       String keys3 = "ZXCVBNM";
@@ -98,13 +133,19 @@ public class GroupProjectWordle extends Application
           b.getStyleClass().add("keyboard-button"); //css styling
           b.setPrefWidth(35);
           row3.getChildren().add(b);
+          b.setOnAction(event -> {
+            guessLetter(String.valueOf(c));
+            });
+          b.setFocusTraversable(false); // Prevents ENTER key activation
       }
       
       //DELETE button
-      Button deleteBtn = new Button("DEL");
+      Button deleteBtn = new Button("⌫"); // Delete symbol hexcode: 232B
       deleteBtn.setPrefWidth(60);
       deleteBtn.getStyleClass().addAll("keyboard-button", "keyboard-wide"); //css styling
       row3.getChildren().add(deleteBtn);
+      deleteBtn.setOnAction(event -> deleteLetter());
+      deleteBtn.setFocusTraversable(false); // Prevents ENTER key activation
       
       //Add rows to keyboard
       keyboard.getChildren().addAll(row1, row2, row3);
@@ -113,16 +154,122 @@ public class GroupProjectWordle extends Application
       borderPane.setBottom(keyboard);
       BorderPane.setAlignment(keyboard, Pos.CENTER);
 
-
+      // Key input
+      scene.setOnKeyPressed(event ->
+         {
+            if (event.getCode() == KeyCode.ENTER)
+            { // Enter
+               submitGuess();
+               return;
+            }
+            if (event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE)
+            { // Delete or Backspace
+               deleteLetter();
+               return;
+            }
+            String inputChar = event.getCode().getChar();
+            if (inputChar.length() > 0 && Character.isLetter(inputChar.charAt(0)))
+            {
+               guessLetter(inputChar);
+            }
+         });
       
       // Setting up scene and stage
-      Scene scene = new Scene(borderPane, 400, 650);
       scene.getStylesheets().add("wordle.css"); //load the style sheet
       primaryStage.setTitle("Wordle Group Project CPT-237-W34");
       primaryStage.setResizable(false);
       primaryStage.setScene(scene);
       primaryStage.show();
+      
+      // Starting a new game.
+      newGame();
    }
+   
+   public void newGame()
+   {
+      // Reset variable
+      gameEnded = false;
+      guessCount = 0;
+      
+      // Reset guesses
+      for(int i=0; i<6; i++)
+      {
+         GuessRow g = (GuessRow)guessArea.getChildren().get(i);
+         g.reset();
+      }
+      thisGuess = (GuessRow)guessArea.getChildren().get(0);
+      thisGuess.nowGuessing();
+      
+      // Next target word
+      targetWord = potential_answers.get((int)(Math.random() * potential_answers.size())).toUpperCase();
+      //System.out.println("Target: " + targetWord);
+   }
+   
+   public void guessLetter(String letter)
+   {
+      System.out.println("Inputted: " + letter);
+      thisGuess.addLetterToGuess(letter);
+   }
+   
+   public void deleteLetter()
+   {
+      if (gameEnded)
+      {
+         newGame();
+      };
+      
+      thisGuess.backspace();
+   }
+   
+   public boolean wordInDictionary(String test)
+   {
+      test = test.toLowerCase();
+      for (String s : dictionary)
+      {
+         if (test.equals(s)) return true;
+      }
+      return false;
+   }
+   
+   public void submitGuess()
+   {
+      System.out.println("Guessed: " + thisGuess.guess);
+      
+      // Check for enough letters
+      if (thisGuess.guess.length() != 5)
+      {
+         return;
+      }
+      
+      if (wordInDictionary(thisGuess.guess) == false)
+      {
+         return;
+      }
+      
+      // TODO: Check for dictionary
+      
+      if (thisGuess.adjudicateGuess(targetWord))
+      {
+         // Correct guess
+         gameEnded = true;
+         return;
+      }
+      
+      // Next guess
+      guessCount += 1;
+      
+      if (guessCount > 5)
+      {
+         // Failure condition
+         System.out.println("Target: " + targetWord);
+         gameEnded = true;
+         return;
+      }
+      
+      thisGuess = (GuessRow)guessArea.getChildren().get(guessCount);
+      thisGuess.nowGuessing();
+   }
+  
    
    public static void main(String[] args)
    {
