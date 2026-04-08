@@ -1,75 +1,54 @@
-// NOTE: Remember to build this and any other class!!
-
-// Game: Wordle (LetterTile class)
-
-// Anthoni Pineda
-// Justice Earl Pinkney
-// Zachary Ross
-
-// CPT-237-W34
-// Spring 2026
-
-
-import javafx.scene.*;
-import javafx.scene.shape.*;
+import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import javafx.scene.layout.Pane;
 import javafx.geometry.*;
 
-public class LetterTile extends Pane
+public class LetterTile extends StackPane
 {
    Label letterDisplay;
-   static double squareSize = 50.0;
-   
-   // Colors
-   static Color unguessedColor = Color.rgb(255, 255, 255);
-   static Color correctColor = Color.rgb(24, 135, 84);
-   static Color incorrectColor = Color.rgb(120, 125, 125);
-   static Color misplacedColor = Color.rgb(201, 180, 89);
-   
-   // Constructor
+
    LetterTile()
    {
-      
-      // Letter display
-      letterDisplay = new Label(" ");
-      letterDisplay.getStyleClass().add("tile"); //css styling
-      letterDisplay.setMinWidth(squareSize);
-      letterDisplay.setMinHeight(squareSize);
+      letterDisplay = new Label("");
+      letterDisplay.getStyleClass().add("tile");
+      letterDisplay.setMinSize(50,50);
       letterDisplay.setAlignment(Pos.CENTER);
-      this.getChildren().add(letterDisplay);
-      
-      letterDisplay.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+  letterDisplay.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+  
+      getChildren().add(letterDisplay);
    }
-   
+
    public void setLetter(String letter)
    {
       letterDisplay.setText(letter);
    }
-   
+
    public void selectLetter()
    {
-      letterDisplay.setStyle("-fx-background-color: blue;");
+      setStyle("-fx-border-color: blue;");
    }
-   
+
    public void unselectLetter()
    {
-      letterDisplay.setStyle("-fx-background-color: white;");
+      setStyle("-fx-border-color: black;");
    }
-   
+
+   public void setDefault()
+   {
+      setStyle("-fx-background-color: white; -fx-border-color: black;");
+   }
+
    public void setCorrect()
    {
-      letterDisplay.setStyle("-fx-background-color: #188754;");
+      setStyle("-fx-background-color: #188754;");
    }
-   
+
    public void setMisplaced()
    {
-      letterDisplay.setStyle("-fx-background-color: #c9b459;");
+      setStyle("-fx-background-color: #c9b459;");
    }
-   
+
    public void setIncorrect()
    {
-      letterDisplay.setStyle("-fx-background-color: #787d7d;");
+      setStyle("-fx-background-color: #787d7d;");
    }
 }
