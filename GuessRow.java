@@ -55,9 +55,17 @@ public class GuessRow extends HBox
    {
       if (guess.length() == 0) return;
 
+      LetterTile t;
+      
+      if (guess.length() < 5)
+      {
+         t = (LetterTile)getChildren().get(guess.length());
+         t.setDefault();
+      }
+
       guess = guess.substring(0, guess.length()-1);
 
-      LetterTile t = (LetterTile)getChildren().get(guess.length());
+      t = (LetterTile)getChildren().get(guess.length());
       t.setLetter("");
       t.selectLetter();
    }
