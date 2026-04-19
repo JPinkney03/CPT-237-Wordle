@@ -27,6 +27,12 @@ public class GroupProjectWordle extends Application
    GuessRow thisGuess;
    String targetWord = "TESTW";
    boolean gameEnded = false;
+   int timeLimitSec;
+   int timeLeftSec;
+   
+//scenes
+   Scene playScene;
+   Scene settingsScene;
 
 //Dictionary for words
    List<String> dictionary;
@@ -47,7 +53,8 @@ public class GroupProjectWordle extends Application
          dictionary = new ArrayList<>();
          potential_answers = new ArrayList<>(); //added for catching the crash if txt files don't load
       }
-   
+  
+  //Setting up components for playScene
       // Guess grid
       guessArea = new VBox(5);
       guessArea.setAlignment(Pos.CENTER);
@@ -84,10 +91,10 @@ public class GroupProjectWordle extends Application
       borderPane.setCenter(guessArea);
       borderPane.setBottom(keyboard);
    
-      Scene scene = new Scene(borderPane, 440, 650);
+      playScene = new Scene(borderPane, 440, 650);
    
       // Keyboard input event
-      scene.setOnKeyPressed(
+      playScene.setOnKeyPressed(
          e -> {
             if (e.getCode() == KeyCode.ENTER) submitGuess();
             else if (e.getCode() == KeyCode.BACK_SPACE) deleteLetter();
@@ -95,12 +102,49 @@ public class GroupProjectWordle extends Application
                guessLetter(e.getText().toUpperCase());
          });
    
-      primaryStage.setScene(scene);
+      // Setting up settingsScene
+      Pane settingsPane = new Pane();
+      
+      // Start button
+      Button startButton = new Button("Start");
+      settingsPane.getChildren().add(startButton);
+      startButton.setOnAction(e -> { // Start game action
+         primaryStage.setScene(playScene);
+         newGame();
+      });
+      
+      // Difficulty buttons
+      ToggleGroup group = new ToggleGroup();
+      
+      RadioButton easy = new RadioButton("5 minutes");
+      easy.setToggleGroup(group);
+      easy.setOnAction(e -> timeLimitSec = 5 * 60);
+      
+      RadioButton medium = new RadioButton("3 minutes");
+      medium.setToggleGroup(group);
+      medium.setOnAction(e -> timeLimitSec = 3 * 60);
+      
+      RadioButton hard = new RadioButton("1 minute");
+      hard.setToggleGroup(group);
+      hard.setOnAction(e -> timeLimitSec = 1 * 60);
+      
+      easy.setSelected(true); // Easy as default
+      
+      HBox difficultyHBox = new HBox();
+      difficultyHBox.getChildren().addAll(hard, medium, easy);
+      
+      //!!Temp!! VBox
+      VBox vBox = new VBox();
+      vBox.getChildren().add(difficultyHBox);
+      vBox.getChildren().add(startButton);
+   
+      // Opening to settings screen
+      settingsScene = new Scene(vBox, 440, 650);
+      primaryStage.setScene(settingsScene);
       primaryStage.setTitle("Wordle");
       primaryStage.show();
-   
-      newGame();
    }
+
 
    // KEYBOARD Frame positioning
 
@@ -174,6 +218,7 @@ public class GroupProjectWordle extends Application
    //game values
       guessCount = 0;
       gameEnded = false;
+      timeLeftSec = timeLimitSec;
    
       keyboardMap.values().forEach(b -> b.setStyle(""));
    
