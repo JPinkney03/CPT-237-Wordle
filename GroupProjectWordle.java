@@ -27,6 +27,9 @@ public class GroupProjectWordle extends Application
    GuessRow thisGuess;
    String targetWord = "TESTW";
    boolean gameEnded = false;
+   
+   // Timer
+   Timer timer;
    int timeLimitSec;
    int timeLeftSec;
    
@@ -218,7 +221,23 @@ public class GroupProjectWordle extends Application
    //game values
       guessCount = 0;
       gameEnded = false;
+     
+   // Timer
       timeLeftSec = timeLimitSec;
+      timer = new Timer();
+      timer.scheduleAtFixedRate(new TimerTask(){
+         @Override
+         public void run() {
+            Platform.runLater(() -> {
+               timeLeftSec--;
+               System.out.println("Time left: " + (timeLeftSec/60) + "m, " + (timeLeftSec%60) + "s");
+               if (timeLeftSec == 0) {
+                  gameEnded = true;
+                  endScreen(false);
+               }
+            });
+         }
+      }, 1000, 1000); // 1000ms = 1sec
    
       keyboardMap.values().forEach(b -> b.setStyle(""));
    
@@ -281,6 +300,7 @@ public class GroupProjectWordle extends Application
 //End Screen Pop Up
    private void endScreen(boolean won)
    {
+      timer.cancel();
       Alert alert = new Alert(Alert.AlertType.INFORMATION);
       alert.setHeaderText(won ? "You Won!" : "You Lost!");
       alert.setContentText("Word: " + targetWord);
