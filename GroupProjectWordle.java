@@ -54,7 +54,7 @@ public class GroupProjectWordle extends Application
       try
       {
          dictionary = Files.readAllLines(Paths.get("valid-wordle-words.txt"));
-         potential_answers = Files.readAllLines(Paths.get("valid-wordle-words.txt"));
+         potential_answers = Files.readAllLines(Paths.get("wordle-answers-alphabetical.txt"));
       }
       catch(Exception e)
       {
@@ -156,7 +156,6 @@ public class GroupProjectWordle extends Application
       // Start button
       Button startButton = new Button("Start");
       settingsPane.getChildren().add(startButton);
-      //startButton.setAlignment(Pos.CENTER);
       startButton.setOnAction(e -> { // Start game action
          primaryStage.setScene(playScene);
          newGame();
