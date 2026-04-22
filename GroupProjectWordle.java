@@ -32,6 +32,11 @@ public class GroupProjectWordle extends Application
    Timer timer;
    int timeLimitSec;
    int timeLeftSec;
+   Label timeDisplay;
+   
+   int easyTime = 5 * 60 + 1;
+   int mediumTime = 3 * 60 + 1;
+   int hardTime = 1 * 60 + 1;
    
 //scenes
    Scene playScene;
@@ -75,8 +80,11 @@ public class GroupProjectWordle extends Application
       Button infoBtn = new Button("ℹ");
       infoBtn.setOnAction(e -> showInfo()); //Small tutorial for players
    
+      // Timer display
+      timeDisplay = new Label("0:00");
+   
    //Hbox wrapper
-      HBox titleBox = new HBox(10, title, infoBtn);
+      HBox titleBox = new HBox(10, title, infoBtn, timeDisplay);
       titleBox.setAlignment(Pos.CENTER);
    
       // Keyboard Set Up
@@ -88,7 +96,8 @@ public class GroupProjectWordle extends Application
          createKeyboardRow("ASDFGHJKL"),
          createLastRow()
          );
-   
+
+      // Setting borderPane
       BorderPane borderPane = new BorderPane();
       borderPane.setTop(titleBox);
       borderPane.setCenter(guessArea);
@@ -108,38 +117,60 @@ public class GroupProjectWordle extends Application
       // Setting up settingsScene
       Pane settingsPane = new Pane();
       
+      // Difficulty settings
+      // Label
+      Label difficultyLabel = new Label("Time Limit");
+      difficultyLabel.setAlignment(Pos.CENTER);
+      
+      HBox difficultyLabelBox = new HBox();
+      difficultyLabelBox.setAlignment(Pos.CENTER);
+      difficultyLabelBox.getChildren().add(difficultyLabel);
+      difficultyLabelBox.setPadding(new Insets(20, 0, 0, 0));
+      
+      // Radio Buttons
+      ToggleGroup group = new ToggleGroup();
+      
+      RadioButton easy = new RadioButton("5 minutes");
+      easy.setMinWidth(100.0);
+      easy.setToggleGroup(group);
+      easy.setOnAction(e -> timeLimitSec = easyTime);
+      
+      RadioButton medium = new RadioButton("3 minutes");
+      medium.setMinWidth(100.0);
+      medium.setToggleGroup(group);
+      medium.setOnAction(e -> timeLimitSec = mediumTime);
+      
+      RadioButton hard = new RadioButton("1 minute");
+      hard.setMinWidth(100.0);
+      hard.setToggleGroup(group);
+      hard.setOnAction(e -> timeLimitSec = hardTime);
+      
+      easy.setSelected(true); // Easy as default
+      timeLimitSec = easyTime;
+      
+      HBox difficultyButtonsBox = new HBox();
+      difficultyButtonsBox.setAlignment(Pos.CENTER);
+      difficultyButtonsBox.getChildren().addAll(hard, medium, easy);
+      difficultyButtonsBox.setPadding(new Insets(10, 0, 25, 0));
+      
       // Start button
       Button startButton = new Button("Start");
       settingsPane.getChildren().add(startButton);
+      //startButton.setAlignment(Pos.CENTER);
       startButton.setOnAction(e -> { // Start game action
          primaryStage.setScene(playScene);
          newGame();
       });
       
-      // Difficulty buttons
-      ToggleGroup group = new ToggleGroup();
+      HBox startButtonBox = new HBox();
+      startButtonBox.setAlignment(Pos.CENTER);
+      startButtonBox.getChildren().add(startButton);
       
-      RadioButton easy = new RadioButton("5 minutes");
-      easy.setToggleGroup(group);
-      easy.setOnAction(e -> timeLimitSec = 5 * 60);
-      
-      RadioButton medium = new RadioButton("3 minutes");
-      medium.setToggleGroup(group);
-      medium.setOnAction(e -> timeLimitSec = 3 * 60);
-      
-      RadioButton hard = new RadioButton("1 minute");
-      hard.setToggleGroup(group);
-      hard.setOnAction(e -> timeLimitSec = 1 * 60);
-      
-      easy.setSelected(true); // Easy as default
-      
-      HBox difficultyHBox = new HBox();
-      difficultyHBox.getChildren().addAll(hard, medium, easy);
-      
-      //!!Temp!! VBox
+      // Putting settings screen together
       VBox vBox = new VBox();
-      vBox.getChildren().add(difficultyHBox);
-      vBox.getChildren().add(startButton);
+      vBox.getChildren().add(difficultyLabelBox);
+      vBox.getChildren().add(difficultyButtonsBox);
+      vBox.getChildren().add(startButtonBox);
    
       // Opening to settings screen
       settingsScene = new Scene(vBox, 440, 650);
@@ -230,14 +261,19 @@ public class GroupProjectWordle extends Application
          public void run() {
             Platform.runLater(() -> {
                timeLeftSec--;
-               System.out.println("Time left: " + (timeLeftSec/60) + "m, " + (timeLeftSec%60) + "s");
+               if(timeLeftSec%60 < 10) {
+                  timeDisplay.setText(String.valueOf(timeLeftSec/60) + ":0" + String.valueOf(timeLeftSec%60));
+               }
+               else {
+                  timeDisplay.setText(String.valueOf(timeLeftSec/60) + ":" + String.valueOf(timeLeftSec%60));
+               }
                if (timeLeftSec == 0) {
                   gameEnded = true;
                   endScreen(false);
                }
             });
          }
-      }, 1000, 1000); // 1000ms = 1sec
+      }, 0, 1000); // 1000ms = 1sec
    
       keyboardMap.values().forEach(b -> b.setStyle(""));
    
