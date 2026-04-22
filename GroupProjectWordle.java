@@ -68,7 +68,7 @@ public class GroupProjectWordle extends Application
       {
       //gets dictionary file and reads it to get list of valid words
          dictionary = Files.readAllLines(Paths.get("valid-wordle-words.txt"));
-         potential_answers = Files.readAllLines(Paths.get("valid-wordle-words.txt"));
+         potential_answers = Files.readAllLines(Paths.get("wordle-answers-alphabetical.txt"));
       }
       catch(Exception e)  //added for catching the crash if txt files don't load
       {
