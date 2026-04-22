@@ -79,6 +79,7 @@ public class GroupProjectWordle extends Application
       title.setAlignment(Pos.CENTER);
       Button infoBtn = new Button("ℹ");
       infoBtn.setOnAction(e -> showInfo()); //Small tutorial for players
+      infoBtn.setFocusTraversable(false);
    
       // Timer display
       timeDisplay = new Label("0:00");
@@ -194,6 +195,7 @@ public class GroupProjectWordle extends Application
          keyboardMap.put(String.valueOf(c), b);
       
          b.setOnAction(e -> guessLetter(String.valueOf(c)));
+         b.setFocusTraversable(false);
          row.getChildren().add(b);
       }
    
@@ -210,6 +212,7 @@ public class GroupProjectWordle extends Application
    
       Button delete = new Button("⌫");
       delete.setOnAction(e -> deleteLetter());
+      delete.setFocusTraversable(false);
    
       row.getChildren().add(enter);
    
@@ -221,6 +224,7 @@ public class GroupProjectWordle extends Application
          keyboardMap.put(String.valueOf(c), b);
       
          b.setOnAction(e -> guessLetter(String.valueOf(c)));
+         b.setFocusTraversable(false);
          row.getChildren().add(b);
       }
    

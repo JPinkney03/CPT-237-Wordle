@@ -78,7 +78,7 @@ public class GuessRow extends HBox
       {
          int index = i;
 //adds small effect
-         PauseTransition pause = new PauseTransition(Duration.millis(300*i));
+         PauseTransition pause = new PauseTransition(Duration.millis(200*i));
          pause.setOnFinished(e -> {
 
             LetterTile tile = (LetterTile)getChildren().get(index);
